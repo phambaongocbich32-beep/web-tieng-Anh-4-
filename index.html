@@ -175,6 +175,32 @@ h2{font-size:28px}
 .hero .big{font-size:44px;line-height:1}
 .hero h2{margin:0;color:inherit}.hero .sub{margin:0;color:inherit;opacity:.88}
 @media (max-width:520px){.ubadge{width:48px;height:48px;font-size:24px}h2{font-size:24px}.hero .big{font-size:34px}}
+
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+.mc{background:var(--brand);color:var(--brand-ink);border:0;border-radius:14px;min-height:104px;font:800 32px var(--f-d);cursor:pointer;box-shadow:0 4px 0 color-mix(in srgb,var(--brand) 55%,#000);display:grid;place-items:center;padding:6px;min-width:0}
+.mc:not(.up)::after{content:"?"}
+.mc.up{background:var(--card);color:var(--ink);border:2px solid var(--line);box-shadow:none;cursor:default}
+.mc.ok{background:var(--good-bg);border-color:var(--good)}
+.mc .wd{font:800 17px/1.2 var(--f-d);overflow-wrap:anywhere}
+.mc .pic{min-width:0;font-size:38px}.mc .pic .flag{width:58px;height:38px}
+.ghead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 4px}
+.ghead .pill{background:var(--soft);border-radius:999px;padding:4px 14px;font:800 16px var(--f-d)}
+.big-say{display:flex;justify-content:center;margin:14px 0}
+.big-say .sp{width:84px;height:84px}.big-say .sp svg{width:38px;height:38px}
+.opts4{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.opts4 .vc.good{background:var(--good-bg);border-color:var(--good)}.opts4 .vc.bad{background:var(--bad-bg);border-color:var(--bad)}
+.stage-c{text-align:center}
+.letters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0}
+.letters .tok{font:800 24px var(--f-d);min-width:46px;padding:8px 10px;text-transform:lowercase}
+.slots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;min-height:54px;margin:8px 0}
+.slots .tok{font:800 24px var(--f-d);min-width:46px;padding:8px 10px;background:var(--soft)}
+.slots.shake{animation:sh .35s}@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.tfcard{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px}
+.tfcard .w{font:800 30px var(--f-d)}
+.tfbtn{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.tfbtn .btn{font-size:20px;padding:14px}
+.btn.yes{background:var(--good);color:#fff}.btn.no{background:var(--bad);color:#fff}
+@media (max-width:520px){.mem{grid-template-columns:repeat(3,1fr)}}
 </style>
 
 <header class="top"><div class="in">
@@ -182,6 +208,7 @@ h2{font-size:28px}
   <nav class="tabs" role="tablist" id="tabs">
     <button role="tab" data-t="vocab">Từ vựng</button>
     <button role="tab" data-t="pat">Mẫu câu</button>
+    <button role="tab" data-t="game">Trò chơi</button>
     <button role="tab" data-t="test">Kiểm tra</button>
   </nav>
 </div></header>
@@ -745,7 +772,7 @@ const $main=()=>document.getElementById('main');
 
 /* ---------- views ---------- */
 let tab=store.get('e4tab','vocab'),unit=store.get('e4unit',1);
-function show(t){tab=t;store.set('e4tab',t);clearInterval(timerH);document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.t===t)));({vocab:vVocab,pat:vPat,test:vTest})[t]();window.scrollTo(0,0)}
+function show(t){tab=t;store.set('e4tab',t);clearInterval(timerH);document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.t===t)));({vocab:vVocab,pat:vPat,game:vGame,test:vTest})[t]();window.scrollTo(0,0)}
 function unitPicker(onPick){const box=h('div');UNITS.reduce((acc,u)=>{(acc[u.th]=acc[u.th]||[]).push(u);return acc},[]).forEach((us,i)=>{box.append(h('div',{class:'theme','data-th':i},'Chủ đề '+(i+1)+' · '+THEMES[i]));box.append(h('div',{class:'chips'},us.map(u=>h('button',{class:'chip','data-th':u.th,type:'button','aria-pressed':String(u.id===unit),title:u.t,onclick:()=>{unit=u.id;store.set('e4unit',unit);onPick()}},'Unit '+u.id))))});return box}
 function bookPages(u){const names=['Bài 1 · trang 1','Bài 1 · trang 2','Bài 2 · trang 1','Bài 2 · trang 2','Bài 3 · trang 1','Bài 3 · trang 2'];
  return h('div',{style:'margin-top:22px'},h('h3',null,'Tranh trong sách Unit '+u.id),h('p',{class:'sub'},'Trang sách Global Success. Chạm vào trang để phóng to.'),
@@ -770,6 +797,49 @@ function vTest(){const m=$main();
  m.replaceChildren(h('div',{class:'hero'},h('span',{class:'big'},'✏️'),h('div',null,h('h2',null,'Kiểm tra'),h('p',{class:'sub'},'Đề gồm Nghe, Đọc, Viết, Nói như đề mẫu ở lớp. Máy chấm điểm ngay khi bấm “Nộp bài”.'))),h('div',{style:'height:12px'}),
   h('div',{class:'tests'},cards),
   h('div',{class:'card',style:'margin-top:14px'},h('h3',null,'Đề theo từng Unit'),h('p',{class:'sub'},'Chọn một Unit để làm đề ngắn, 15 phút.'),h('div',{class:'bar',style:'margin:0'},sel,h('button',{class:'btn',type:'button',onclick:()=>{const id=+sel.value;unit=id;store.set('e4unit',id);const u=UNITS[id-1];runTest({id:'unit'+id,t:'Đề Unit '+id+' · '+u.t,d:u.vi,u:[id],min:15,back:'test',parts:mkParts})}},'Làm bài'))));}
+
+/* ---------- games ---------- */
+let gameUnit=store.get('e4gu','all');const bestG=store.get('e4gbest',{});
+const gPool=()=>{const ids=gameUnit==='all'?UNITS.map(u=>u.id):[gameUnit];return ids.flatMap(i=>UNITS[i-1].vocab).filter(v=>!v.pic.startsWith('T:'))};
+const distinct=(a,n)=>{const seen=new Set(),r=[];for(const v of shuf(a)){const k=v.en+'|'+v.pic;if(seen.has(k)||seen.has(v.pic))continue;seen.add(k);seen.add(v.pic);r.push(v);if(r.length>=n)break}return r};
+function vGame(){const m=$main();
+ const sel=h('select',{id:'gsel','aria-label':'Chọn Unit để chơi'},h('option',{value:'all'},'Tất cả 20 Unit'),UNITS.map(u=>h('option',{value:u.id},'Unit '+u.id+' · '+u.t)));sel.value=String(gameUnit);
+ sel.addEventListener('change',()=>{gameUnit=sel.value==='all'?'all':+sel.value;store.set('e4gu',gameUnit)});
+ const games=[['🃏','Lật thẻ','Tìm các cặp hình và từ giống nhau.',gMemory],['🎧','Nghe và chọn nhanh','Nghe một từ, bấm đúng hình. 10 câu.',gRush],['🔠','Xếp chữ','Sắp xếp các chữ cái thành từ đúng.',gSpell],['⚡','Đúng hay sai','Hình và từ có khớp nhau không? 45 giây.',gTF]];
+ const stage=h('div');
+ const menu=()=>{m.replaceChildren(h('div',{class:'hero'},h('span',{class:'big'},'🎮'),h('div',null,h('h2',null,'Trò chơi'),h('p',{class:'sub'},'Vừa chơi vừa ôn từ vựng. Chọn Unit rồi chọn trò chơi.'))),
+  h('div',{class:'bar'},h('label',{for:'gsel',style:'font-weight:800'},'Ôn từ vựng:'),sel),
+  h('div',{class:'tests'},games.map(([ic,t,d,fn],i)=>h('div',{class:'card tcard','data-th':i},h('div',{class:'big'},ic),h('h3',null,t),h('div',{class:'meta'},d),bestG[t]!=null?h('div',{class:'best'},'Kỷ lục: '+bestG[t]+' điểm'):null,h('button',{class:'btn',type:'button',onclick:()=>play(fn,t)},'Chơi')))))};
+ function play(fn,t){clearInterval(timerH);const pool=gPool();stage.replaceChildren();m.replaceChildren(h('h2',null,t),h('p',{class:'sub'},gameUnit==='all'?'Từ vựng 20 Unit':'Unit '+gameUnit+' · '+UNITS[gameUnit-1].t),stage,h('div',{class:'bar'},h('button',{class:'btn alt',type:'button',onclick:()=>{clearInterval(timerH);menu()}},'Chọn trò chơi khác')));
+  const fin=(score,msg)=>{clearInterval(timerH);const old=bestG[t];const rec=old==null||score>old;if(rec){bestG[t]=score;store.set('e4gbest',bestG)}
+   stage.replaceChildren(h('div',{class:'result'},h('div',{class:'score'},score,h('small',null,' điểm')),h('p',{style:'font-weight:700;margin:6px 0'},msg),h('p',{class:'note'},rec?'Kỷ lục mới!':'Kỷ lục của em: '+old+' điểm'),h('div',{class:'bar',style:'justify-content:center'},h('button',{class:'btn',type:'button',onclick:()=>play(fn,t)},'Chơi lại'))))};
+  fn(stage,pool,fin)}
+ menu()}
+function gMemory(st,pool,fin){const items=distinct(pool,6);const cards=shuf(items.flatMap(it=>[{it,k:'p'},{it,k:'w'}]));let open=[],matched=0,moves=0,lock=false;const mv=h('span',{class:'pill'},'Lượt lật: 0');
+ const face=c=>c.b.querySelector('.face');
+ const grid=h('div',{class:'mem'},cards.map(c=>{const b=h('button',{type:'button',class:'mc','aria-label':'Thẻ úp'},h('span',{class:'face'}));c.b=b;b.addEventListener('click',()=>flip(c));return b}));
+ function flip(c){if(lock||c.b.classList.contains('up'))return;c.b.classList.add('up');face(c).replaceChildren(c.k==='p'?pic(c.it.pic):h('span',{class:'wd'},c.it.en));if(c.k==='w')say(c.it.en);open.push(c);
+  if(open.length===2){moves++;mv.textContent='Lượt lật: '+moves;const [a,b]=open;if(a.it===b.it&&a.k!==b.k){a.b.classList.add('ok');b.b.classList.add('ok');open=[];matched++;if(matched===items.length)setTimeout(()=>fin(Math.max(10,100-(moves-items.length)*8),'Hoàn thành sau '+moves+' lượt lật.'),700)}
+   else{lock=true;setTimeout(()=>{[a,b].forEach(x=>{x.b.classList.remove('up');face(x).replaceChildren()});open=[];lock=false},900)}}}
+ st.append(h('div',{class:'ghead'},mv),grid)}
+function gRush(st,pool,fin){const N=10,qs=distinct(pool,N);let i=0,score=0,streak=0,right=0;const box=h('div',{class:'stage-c'});st.append(box);
+ function next(){if(i>=qs.length)return fin(score,'Đúng '+right+'/'+qs.length+' câu.');const it=qs[i];const opts=shuf([it,...distinct(pool.filter(v=>v.pic!==it.pic),3)]);let done=false;
+  box.replaceChildren(h('div',{class:'ghead'},h('span',{class:'pill'},'Câu '+(i+1)+'/'+qs.length),h('span',{class:'pill'},'Điểm: '+score+(streak>1?' · chuỗi '+streak:''))),h('div',{class:'big-say'},spkBtn(it.en,'Nghe lại')),h('p',{class:'sub'},'Nghe và bấm đúng hình'),
+   h('div',{class:'opts4'},opts.map((o,k)=>{const b=h('button',{type:'button',class:'vc','data-th':k%4,onclick:()=>{if(done)return;done=true;const ok=o===it;if(ok){score+=10+Math.min(streak,5)*2;streak++;right++}else streak=0;b.classList.add(ok?'good':'bad');if(!ok)bx.find(x=>x.o===it).b.classList.add('good');setTimeout(()=>{i++;next()},ok?700:1300)}},pic(o.pic));return {o,b}}).map(x=>x.b)));
+  const bx=[...box.querySelectorAll('.opts4 .vc')].map((b,k)=>({b,o:opts[k]}));setTimeout(()=>say(it.en),250)}
+ next()}
+function gSpell(st,pool,fin){const ws=distinct(pool.filter(v=>/^[A-Za-z]{3,10}$/.test(v.en)),8);let i=0,score=0;const box=h('div',{class:'stage-c'});st.append(box);
+ function next(){if(i>=ws.length)return fin(score,'Em xếp đúng nhiều từ lắm!');const it=ws[i];const w=it.en.toLowerCase();let tries=0;const letters=shuf(w.split('').map((c,k)=>({c,k})));const picked=[];
+  const slots=h('div',{class:'slots'});const bank=h('div',{class:'letters'});
+  const draw=()=>{slots.replaceChildren(...picked.map(t=>h('button',{type:'button',class:'tok',onclick:()=>{picked.splice(picked.indexOf(t),1);draw()}},t.c)));bank.replaceChildren(...letters.map(t=>h('button',{type:'button',class:'tok'+(picked.includes(t)?' used':''),disabled:picked.includes(t),onclick:()=>{picked.push(t);draw();if(picked.length===w.length)check()}},t.c)))};
+  const check=()=>{const got=picked.map(t=>t.c).join('');if(got===w){score+=tries===0?10:5;say(it.en);slots.querySelectorAll('.tok').forEach(t=>{t.style.background='var(--good-bg)'});lockAll(box);setTimeout(()=>{i++;next()},900)}else{tries++;slots.classList.add('shake');setTimeout(()=>{slots.classList.remove('shake');picked.length=0;draw()},400)}};
+  box.replaceChildren(h('div',{class:'ghead'},h('span',{class:'pill'},'Từ '+(i+1)+'/'+ws.length),h('span',{class:'pill'},'Điểm: '+score)),h('div',{style:'display:flex;justify-content:center;gap:12px;align-items:center;margin:8px 0'},pic(it.pic),spkBtn(it.en,'Nghe từ')),h('p',{class:'sub'},it.vi),slots,bank,h('button',{class:'btn alt',type:'button',onclick:()=>{i++;next()}},'Bỏ qua'));draw()}
+ next()}
+function gTF(st,pool,fin){let score=0,left=45,right=0,wrong=0,cur=null;const box=h('div',{class:'stage-c'});const tm=h('span',{class:'pill'},'45 giây'),sc=h('span',{class:'pill'},'Điểm: 0');st.append(h('div',{class:'ghead'},tm,sc),box);
+ function nxt(){const it=rnd(pool);const truth=Math.random()<.5;const word=truth?it:rnd(pool.filter(v=>v.pic!==it.pic));cur={truth};
+  box.replaceChildren(h('div',{class:'card tfcard'},pic(it.pic),h('div',{class:'w'},word.en),h('div',{class:'note'},word.vi)),h('div',{class:'tfbtn'},h('button',{type:'button',class:'btn yes',onclick:()=>ans(true)},'Đúng'),h('button',{type:'button',class:'btn no',onclick:()=>ans(false)},'Sai')))}
+ function ans(v){if(left<=0)return;if(v===cur.truth){score+=10;right++}else{score=Math.max(0,score-5);wrong++}sc.textContent='Điểm: '+score;nxt()}
+ timerH=setInterval(()=>{left--;tm.textContent=left+' giây';if(left<=0){clearInterval(timerH);fin(score,'Đúng '+right+' câu, sai '+wrong+' câu.')}},1000);nxt()}
 document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.t)});
 show(tab);
 </script>
