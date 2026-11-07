@@ -1,6 +1,6 @@
 # Ôn tập Tiếng Anh 4 (Global Success)
 
-Web ôn tập cho học sinh lớp 4: từ vựng và mẫu câu 20 Unit, 4 trò chơi ôn tập, đề kiểm tra Nghe – Đọc – Viết – Nói, máy tự chấm điểm.
+Web ôn tập cho học sinh lớp 4: từ vựng và mẫu câu 20 Unit, 17 trò chơi ôn tập theo từng Unit, đề kiểm tra Nghe – Đọc – Viết – Nói, máy tự chấm điểm.
 
 ## Chạy trên GitHub Pages
 1. Tạo repository mới, tải toàn bộ file trong thư mục này lên (giữ nguyên thư mục `pages/`).
